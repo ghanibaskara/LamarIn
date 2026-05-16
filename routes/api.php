@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\LowonganController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
@@ -12,4 +13,13 @@ Route::prefix('auth')->group(function () {
         Route::post('/refresh', [AuthController::class, 'refresh']);
         Route::post('/logout', [AuthController::class, 'logout']);
     });
+});
+
+Route::middleware('auth:api')->group(function () {
+    Route::get('/lowongan', [LowonganController::class, 'index']);
+    Route::post('/lowongan', [LowonganController::class, 'store']);
+    Route::get('/lowongan/{id}', [LowonganController::class, 'show']);
+    Route::put('/lowongan/{id}', [LowonganController::class, 'update']);
+    Route::delete('/lowongan/{id}', [LowonganController::class, 'destroy']);
+    Route::patch('/lowongan/{id}/status', [LowonganController::class, 'updateStatus']);
 });
