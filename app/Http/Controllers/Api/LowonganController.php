@@ -20,7 +20,7 @@ class LowonganController extends Controller
      * @OA\Get(
      *     path="/api/lowongan",
      *     tags={"Lowongan"},
-     *     summary="Melihat semua lowongan milik penyedia yang login",
+     *     summary="Melihat lowongan (penyedia: milik sendiri | pelamar: semua aktif)",
      *     security={{"bearerAuth":{}}},
      *     @OA\Response(
      *         response=200,
@@ -29,12 +29,21 @@ class LowonganController extends Controller
      *     @OA\Response(response=401, description="Unauthenticated")
      * )
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $lowongans = Lowongan::with('kategori')
-            ->where('user_id', Auth::id())
-            ->latest()
-            ->get();
+        $user = Auth::user();
+
+        if ($user->role === 'penyedia') {
+            $lowongans = Lowongan::with('kategori')
+                ->where('user_id', $user->id)
+                ->latest()
+                ->get();
+        } else {
+            $lowongans = Lowongan::with('kategori', 'penyedia')
+                ->where('status', 'aktif')
+                ->latest()
+                ->get();
+        }
 
         return response()->json([
             'message' => 'Daftar lowongan berhasil diambil.',
@@ -65,11 +74,16 @@ class LowonganController extends Controller
      *     ),
      *     @OA\Response(response=201, description="Lowongan berhasil dibuat"),
      *     @OA\Response(response=401, description="Unauthenticated"),
+     *     @OA\Response(response=403, description="Forbidden — bukan penyedia"),
      *     @OA\Response(response=422, description="Validasi gagal")
      * )
      */
     public function store(Request $request): JsonResponse
     {
+        if (Auth::user()->role !== 'penyedia') {
+            return response()->json(['message' => 'Akses ditolak. Hanya untuk penyedia.'], 403);
+        }
+
         $validated = $request->validate([
             'judul'           => ['required', 'string', 'max:255'],
             'deskripsi'       => ['required', 'string'],
@@ -108,14 +122,21 @@ class LowonganController extends Controller
      */
     public function show(string $id): JsonResponse
     {
+        $user     = Auth::user();
         $lowongan = Lowongan::with('kategori', 'penyedia')->find($id);
 
         if (! $lowongan) {
             return response()->json(['message' => 'Lowongan tidak ditemukan.'], 404);
         }
 
-        if ($lowongan->user_id !== Auth::id()) {
-            return response()->json(['message' => 'Akses ditolak.'], 403);
+        if ($user->role === 'penyedia') {
+            if ($lowongan->user_id !== Auth::id()) {
+                return response()->json(['message' => 'Akses ditolak.'], 403);
+            }
+        } else {
+            if ($lowongan->status !== 'aktif') {
+                return response()->json(['message' => 'Lowongan tidak ditemukan.'], 404);
+            }
         }
 
         return response()->json([
@@ -152,6 +173,10 @@ class LowonganController extends Controller
      */
     public function update(Request $request, string $id): JsonResponse
     {
+        if (Auth::user()->role !== 'penyedia') {
+            return response()->json(['message' => 'Akses ditolak. Hanya untuk penyedia.'], 403);
+        }
+
         $lowongan = Lowongan::find($id);
 
         if (! $lowongan) {
@@ -196,6 +221,10 @@ class LowonganController extends Controller
      */
     public function destroy(string $id): JsonResponse
     {
+        if (Auth::user()->role !== 'penyedia') {
+            return response()->json(['message' => 'Akses ditolak. Hanya untuk penyedia.'], 403);
+        }
+
         $lowongan = Lowongan::find($id);
 
         if (! $lowongan) {
@@ -234,6 +263,10 @@ class LowonganController extends Controller
      */
     public function updateStatus(Request $request, string $id): JsonResponse
     {
+        if (Auth::user()->role !== 'penyedia') {
+            return response()->json(['message' => 'Akses ditolak. Hanya untuk penyedia.'], 403);
+        }
+
         $lowongan = Lowongan::find($id);
 
         if (! $lowongan) {

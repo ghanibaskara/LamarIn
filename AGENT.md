@@ -23,12 +23,13 @@ Dibangun sebagai tugas akhir mata kuliah **Teknologi Integrasi Sistem - B**, Uni
 
 | No | Nama | NIM | Fitur | Status |
 |----|------|-----|-------|--------|
-| 1 | Zulfikar Ramzy | 245150701111002 | Manajemen Lowongan (5.2) | ✅ Selesai |
-| 2 | Ghani Baskara Syah | 245150700111008 | Fitur Pelamaran (5.3) | 🔲 Belum |
+| 1 | Zulfikar Ramzy | 245150701111002 | Manajemen Lowongan (5.2) | ✅ Selesai & Tested |
+| 2 | Ghani Baskara Syah | 245150700111008 | Fitur Pelamaran (5.3) | ✅ Selesai & Tested |
 | 3 | Septian Nuril Arifin | 245150700111011 | Manajemen Pelamar oleh Penyedia (5.4) | 🔲 Belum |
 | 4 | Husein Sidharta Muhammad | 245150707111040 | Pelacakan Status Lamaran (5.5) | 🔲 Belum |
 | 5 | Ahmad Ahza Ainurrahman | 245150707111007 | Kategori & Filter Lowongan (5.6) | 🔲 Belum |
-| Semua | — | — | JWT Auth (5.1) + Swagger Docs | ✅ Selesai |
+| Semua | — | — | JWT Auth (5.1) + Role Register | ✅ Selesai & Tested |
+| Semua | — | — | Swagger/OpenAPI Docs | ⏳ Annotation ada, package belum install |
 
 ---
 
@@ -42,24 +43,30 @@ LamarIn/
 │   │       └── Api/
 │   │           ├── AuthController.php          ✅ (5.1)
 │   │           ├── LowonganController.php      ✅ (5.2)
-│   │           ├── LamaranController.php       🔲 (5.3 - Ghani)
+│   │           ├── LamaranController.php       ✅ (5.3)
 │   │           ├── PelamarController.php       🔲 (5.4 - Septian)
 │   │           ├── StatusLamaranController.php 🔲 (5.5 - Husein)
 │   │           └── KategoriController.php      🔲 (5.6 - Ahza)
 │   └── Models/
-│       ├── User.php              ✅
+│       ├── User.php              ✅ (fillable lengkap + relasi lowongans, lamarans)
 │       ├── Lowongan.php          ✅
-│       ├── Lamaran.php           ⚠️ Stub kosong — perlu dilengkapi (5.3)
+│       ├── Lamaran.php           ✅ (fillable + relasi pelamar, lowongan)
 │       └── KategoriPekerjaan.php ⚠️ Stub kosong — perlu dilengkapi (5.6)
 ├── database/
 │   └── migrations/
-│       ├── 0001_01_01_000000_create_users_table.php           ✅
-│       ├── 2026_05_16_000001_create_lowongans_table.php       ✅
-│       ├── 2026_05_16_000002_add_role_to_users_table.php      ✅
-│       ├── 2026_05_16_000003_create_lamarans_table.php        🔲 (5.3 - Ghani)
+│       ├── 0001_01_01_000000_create_users_table.php               ✅
+│       ├── 2026_05_16_000001_create_lowongans_table.php           ✅
+│       ├── 2026_05_16_000002_add_role_to_users_table.php          ✅
+│       ├── 2026_05_16_000003_create_lamarans_table.php            ✅
 │       └── 2026_05_16_000004_create_kategori_pekerjaans_table.php 🔲 (5.6 - Ahza)
-└── routes/
-    └── api.php                   ✅ (perlu di-update setiap fitur baru)
+├── routes/
+│   └── api.php                   ✅ (auth + lowongan + lamaran)
+└── tests/
+    ├── TestCase.php              ✅ (helper: authHeaders, makePenyedia, makePelamar)
+    └── Feature/
+        ├── AuthTest.php          ✅ (10 tests)
+        ├── LowonganTest.php      ✅ (18 tests)
+        └── LamaranTest.php       ✅ (12 tests)
 ```
 
 ---
@@ -163,8 +170,8 @@ created_at / updated_at timestamps
 
 ---
 
-### 5.3 Fitur Pelamaran — `LamaranController` 🔲
-> **Dikerjakan oleh: Ghani Baskara Syah**
+### 5.3 Fitur Pelamaran — `LamaranController` ✅
+> **Dikerjakan oleh: Ghani Baskara Syah — SELESAI**
 
 **Role yang bisa mengakses: `pelamar`**
 
@@ -359,6 +366,8 @@ Selalu gunakan format berikut secara konsisten:
 }
 ```
 
+> **Catatan:** Untuk endpoint DELETE yang sukses, tidak perlu menyertakan `data`.
+
 HTTP status yang digunakan:
 - `200` OK (GET, PUT, PATCH, DELETE berhasil)
 - `201` Created (POST berhasil)
@@ -375,8 +384,8 @@ if (Auth::user()->role !== 'penyedia') {
 }
 ```
 
-### 6.3 Anotasi Swagger (wajib untuk setiap controller baru)
-Setiap method di controller **wajib** memiliki anotasi `@OA\` sesuai pola yang sudah ada di `LowonganController.php`. Lihat file tersebut sebagai referensi.
+### 6.3 Anotasi Swagger (akan dikerjakan belakangan)
+Setiap method di controller **wajib** memiliki anotasi `@OA\` sesuai pola yang sudah ada di `LowonganController.php`. Saat ini anotasi baru ada di `LowonganController`. Package `darkaonline/l5-swagger` belum di-install — akan dikerjakan setelah semua fitur selesai.
 
 Struktur minimal:
 ```php
@@ -409,6 +418,8 @@ Struktur minimal:
 - Validasi: `mimes:pdf,doc,docx`, `max:2048` (2MB)
 - Simpan path relatif di DB (bukan full URL)
 - Untuk akses publik: `Storage::url($cv_path)`
+- Saat delete record: hapus file dari storage terlebih dahulu
+- Di test: gunakan `Storage::fake('public')` + `UploadedFile::fake()->create('cv.pdf', 500, 'application/pdf')`
 
 ### 6.6 Eager Loading
 Selalu gunakan `with()` untuk menghindari N+1 problem:
@@ -470,16 +481,15 @@ Content-Type: multipart/form-data ← untuk request dengan file upload
 Karena ada dependensi antar fitur, ikuti urutan ini:
 
 ```
-5.1 Auth (✅ selesai)
+5.1 Auth (✅ selesai & tested)
   ↓
-5.2 Lowongan (✅ selesai)
+5.2 Lowongan (✅ selesai & tested)
   ↓
-5.6 Kategori (Ahza) ← independen, bisa paralel dengan 5.3
+5.3 Pelamaran (✅ selesai & tested)
   ↓
-5.3 Pelamaran (Ghani) ← buat tabel lamarans terlebih dahulu
-  ↓
-5.4 Manajemen Pelamar (Septian) ← butuh tabel lamarans dari 5.3
-5.5 Pelacakan Status (Husein)   ← butuh tabel lamarans dari 5.3
+5.4 Manajemen Pelamar (Septian) ← butuh tabel lamarans dari 5.3 ✅
+5.5 Pelacakan Status (Husein)   ← butuh tabel lamarans dari 5.3 ✅
+5.6 Kategori (Ahza)             ← independen, bisa paralel
 ```
 
 ---
@@ -489,10 +499,11 @@ Karena ada dependensi antar fitur, ikuti urutan ini:
 - [ ] `php artisan migrate` berjalan tanpa error
 - [ ] Endpoint baru sudah terdaftar di `routes/api.php`
 - [ ] Model memiliki `$fillable` yang lengkap
+- [ ] Model memiliki relasi yang sesuai
 - [ ] Response mengikuti format standar `{message, data}`
-- [ ] Setiap method controller memiliki anotasi `@OA\`
 - [ ] Role check sudah ada di setiap endpoint yang memerlukan
 - [ ] Tidak ada `dd()`, `dump()`, atau `var_dump()` yang tertinggal
+- [ ] Feature test dibuat dan semua PASSED (`php artisan test`)
 - [ ] Header `Accept: application/json` sudah diuji di Postman/Insomnia
 
 ---
