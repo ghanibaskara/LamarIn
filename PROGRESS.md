@@ -102,6 +102,73 @@
 
 **Total: 45 tests, 101 assertions — semua PASSED ✅**
 
+---
+
+## Sesi 3 — Fitur 5.4 Manajemen Pelamar oleh Penyedia (Septian Nuril Arifin)
+
+**Tanggal:** 2026-05-17
+
+### Bug yang Diperbaiki
+
+#### Bug 5 — `JWT_SECRET` dan `APP_KEY` tidak ada di `phpunit.xml`
+- **File:** `phpunit.xml`
+- **Masalah:** Test environment tidak memiliki `JWT_SECRET` sehingga seluruh test yang menggunakan JWT auth gagal dengan error `Secret is not set`. `APP_KEY` juga tidak ada sehingga `ExampleTest` gagal.
+- **Perbaikan:** Tambahkan `JWT_SECRET` (test key) dan `APP_KEY` (generate via `php artisan key:generate`) ke blok `<php>` di `phpunit.xml`.
+
+### Fitur Baru — 5.4 Manajemen Pelamar oleh Penyedia
+
+#### File yang dibuat
+
+| File | Keterangan |
+|------|------------|
+| `app/Http/Controllers/Api/PelamarController.php` | Controller `index` + `show` + `updateStatus` |
+| `tests/Feature/PelamarTest.php` | 16 feature tests |
+
+#### File yang dimodifikasi
+
+| File | Perubahan |
+|------|-----------|
+| `routes/api.php` | Tambah 3 route baru + import `PelamarController` |
+| `phpunit.xml` | Tambah `JWT_SECRET` dan `APP_KEY` untuk test environment |
+
+#### Endpoint baru
+
+| Method | Endpoint | Role | Deskripsi |
+|--------|----------|------|-----------|
+| GET | `/api/lowongan/{id}/pelamar` | penyedia | Semua pelamar pada lowongan milik penyedia |
+| GET | `/api/lamaran/{id}` | penyedia | Detail satu lamaran (cek ownership via lowongan) |
+| PATCH | `/api/lamaran/{id}/status` | penyedia | Update status lamaran + catatan opsional |
+
+#### Logika penting `index()`
+- Role check: hanya `penyedia`
+- Ownership check: lowongan harus milik penyedia yang login (`lowongan.user_id === Auth::id()`)
+- Eager load relasi `pelamar` (User) pada setiap lamaran
+
+#### Logika penting `show()`
+- Role check: hanya `penyedia`
+- Ownership check: `lamaran.lowongan.user_id === Auth::id()`
+- Eager load `pelamar` dan `lowongan`
+
+#### Logika penting `updateStatus()`
+- Role check: hanya `penyedia`
+- Validasi `status` hanya boleh: `menunggu`, `diproses`, `wawancara`, `diterima`, `ditolak`
+- Field `catatan_penyedia` opsional (nullable string)
+- Ownership check: lowongan yang bersangkutan harus milik penyedia yang login
+- Response include `pelamar` dan `lowongan` setelah update
+
+#### Catatan penting untuk Husein (5.5)
+Route `/lamaran/saya` **WAJIB** didaftarkan **SEBELUM** `/lamaran/{id}` di `routes/api.php` agar Laravel tidak memperlakukan string `"saya"` sebagai `{id}`.
+
+---
+
+### File Testing yang dibuat
+
+| File | Jumlah Tests |
+|------|-------------|
+| `tests/Feature/PelamarTest.php` | 16 tests |
+
+**Total keseluruhan: 61 tests, 130 assertions — semua PASSED ✅**
+
 #### Konfigurasi test
 - Database: SQLite in-memory (dari `phpunit.xml`)
 - File upload: `Storage::fake('public')` + `UploadedFile::fake()`
@@ -116,7 +183,7 @@
 | 5.1 | JWT Auth + Role Register | Semua | ✅ Selesai & Tested |
 | 5.2 | Manajemen Lowongan (CRUD) | Zulfikar | ✅ Selesai & Tested |
 | 5.3 | Fitur Pelamaran | Ghani | ✅ Selesai & Tested |
-| 5.4 | Manajemen Pelamar oleh Penyedia | Septian | 🔲 Belum |
+| 5.4 | Manajemen Pelamar oleh Penyedia | Septian | ✅ Selesai & Tested |
 | 5.5 | Pelacakan Status Lamaran | Husein | 🔲 Belum |
 | 5.6 | Kategori & Filter Lowongan | Ahza | 🔲 Belum |
 | — | Swagger/OpenAPI Docs | Semua | ⏳ Annotation sudah di LowonganController, package belum install |

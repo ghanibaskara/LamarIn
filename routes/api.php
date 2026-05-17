@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\LamaranController;
 use App\Http\Controllers\Api\LowonganController;
+use App\Http\Controllers\Api\PelamarController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
@@ -26,4 +27,10 @@ Route::middleware('auth:api')->group(function () {
 
     Route::post('/lamaran', [LamaranController::class, 'store']);
     Route::delete('/lamaran/{id}', [LamaranController::class, 'destroy']);
+
+    // 5.4 — Manajemen Pelamar oleh Penyedia (Septian)
+    // CATATAN: Saat 5.5 ditambahkan, route /lamaran/saya HARUS didaftarkan SEBELUM /lamaran/{id}
+    Route::get('/lowongan/{id}/pelamar', [PelamarController::class, 'index']);
+    Route::get('/lamaran/{id}', [PelamarController::class, 'show']);
+    Route::patch('/lamaran/{id}/status', [PelamarController::class, 'updateStatus']);
 });

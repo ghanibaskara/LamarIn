@@ -32,5 +32,7 @@
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <env name="JWT_SECRET" value="testsecretkey1234567890testsecretkey12345678"/>
+        <env name="APP_KEY" value="base64:t6TGgbd+bUb7LK3IhvI0TrGpligou37Wl1+hrzTwPAU="/>
     </php>
 </phpunit>
