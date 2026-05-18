@@ -26,7 +26,7 @@ Dibangun sebagai tugas akhir mata kuliah **Teknologi Integrasi Sistem - B**, Uni
 | 1 | Zulfikar Ramzy | 245150701111002 | Manajemen Lowongan (5.2) | ✅ Selesai & Tested |
 | 2 | Ghani Baskara Syah | 245150700111008 | Fitur Pelamaran (5.3) | ✅ Selesai & Tested |
 | 3 | Septian Nuril Arifin | 245150700111011 | Manajemen Pelamar oleh Penyedia (5.4) | 🔲 Belum |
-| 4 | Husein Sidharta Muhammad | 245150707111040 | Pelacakan Status Lamaran (5.5) | 🔲 Belum |
+| 4 | Husein Sidharta Muhammad | 245150707111040 | Pelacakan Status Lamaran (5.5) | ✅ Selesai & Tested |
 | 5 | Ahmad Ahza Ainurrahman | 245150707111007 | Kategori & Filter Lowongan (5.6) | 🔲 Belum |
 | Semua | — | — | JWT Auth (5.1) + Role Register | ✅ Selesai & Tested |
 | Semua | — | — | Swagger/OpenAPI Docs | ⏳ Annotation ada, package belum install |
@@ -45,7 +45,7 @@ LamarIn/
 │   │           ├── LowonganController.php      ✅ (5.2)
 │   │           ├── LamaranController.php       ✅ (5.3)
 │   │           ├── PelamarController.php       🔲 (5.4 - Septian)
-│   │           ├── StatusLamaranController.php 🔲 (5.5 - Husein)
+│   │           ├── StatusLamaranController.php ✅ (5.5 - Husein)
 │   │           └── KategoriController.php      🔲 (5.6 - Ahza)
 │   └── Models/
 │       ├── User.php              ✅ (fillable lengkap + relasi lowongans, lamarans)

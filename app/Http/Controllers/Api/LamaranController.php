@@ -70,6 +70,25 @@ class LamaranController extends Controller
         ], 201);
     }
 
+    public function index(Request $request): JsonResponse
+    {
+        // Pastikan hanya pelamar yang bisa melihat riwayat lamarannya
+        if (Auth::user()->role !== 'pelamar') {
+            return response()->json(['message' => 'Akses ditolak. Hanya untuk pelamar.'], 403);
+        }
+
+        // Ambil semua data lamaran milik user yang sedang login, beserta detail lowongannya
+        $lamarans = Lamaran::with('lowongan')
+            ->where('user_id', Auth::id())
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'message' => 'Berhasil mengambil riwayat status lamaran.',
+            'data'    => $lamarans,
+        ], 200);
+    }
+
     public function destroy(string $id): JsonResponse
     {
         if (Auth::user()->role !== 'pelamar') {

@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\LamaranController;
 use App\Http\Controllers\Api\LowonganController;
 use App\Http\Controllers\Api\PelamarController;
+use App\Http\Controllers\Api\StatusLamaranController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
@@ -24,6 +25,10 @@ Route::middleware('auth:api')->group(function () {
     Route::put('/lowongan/{id}', [LowonganController::class, 'update']);
     Route::delete('/lowongan/{id}', [LowonganController::class, 'destroy']);
     Route::patch('/lowongan/{id}/status', [LowonganController::class, 'updateStatus']);
+
+    // 5.5 — Pelacakan Status Lamaran (Husein)
+    Route::get('/lamaran/saya', [StatusLamaranController::class, 'index']);
+    Route::get('/lamaran/saya/{id}', [StatusLamaranController::class, 'show']);
 
     Route::post('/lamaran', [LamaranController::class, 'store']);
     Route::delete('/lamaran/{id}', [LamaranController::class, 'destroy']);

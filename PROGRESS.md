@@ -184,7 +184,7 @@ Route `/lamaran/saya` **WAJIB** didaftarkan **SEBELUM** `/lamaran/{id}` di `rout
 | 5.2 | Manajemen Lowongan (CRUD) | Zulfikar | ✅ Selesai & Tested |
 | 5.3 | Fitur Pelamaran | Ghani | ✅ Selesai & Tested |
 | 5.4 | Manajemen Pelamar oleh Penyedia | Septian | ✅ Selesai & Tested |
-| 5.5 | Pelacakan Status Lamaran | Husein | 🔲 Belum |
+| 5.5 | Pelacakan Status Lamaran | Husein | ✅ Selesai & Tested |
 | 5.6 | Kategori & Filter Lowongan | Ahza | 🔲 Belum |
 | — | Swagger/OpenAPI Docs | Semua | ⏳ Annotation sudah di LowonganController, package belum install |
 
