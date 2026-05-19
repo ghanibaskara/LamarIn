@@ -2,6 +2,7 @@
 .DS_Store
 .env
 .env.backup
+.claude
 .env.production
 .phpactor.json
 .phpunit.result.cache
@@ -27,5 +28,5 @@ Homestead.yaml
 Thumbs.db
 Proposal_LamarIn.pdf
 .gitignore
-docs/panduan-demo-presentasi.md
 docs/fitur-pelamaran.md
+docs/panduan-demo-presentasi.md
