@@ -9,9 +9,40 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Tag(
+ *     name="Lamaran",
+ *     description="Fitur Pelamaran oleh Pelamar"
+ * )
+ */
 class LamaranController extends Controller
 {
+    /**
+     * @OA\Post(
+     *     path="/api/lamaran",
+     *     tags={"Lamaran"},
+     *     summary="Kirim lamaran pada lowongan (hanya Pelamar)",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 required={"lowongan_id","cv"},
+     *                 @OA\Property(property="lowongan_id", type="integer", example=1),
+     *                 @OA\Property(property="cv", type="string", format="binary", description="File CV (PDF/DOC/DOCX, maks 2MB)"),
+     *                 @OA\Property(property="surat_lamaran", type="string", format="binary", description="Surat lamaran (opsional, PDF/DOC/DOCX, maks 2MB)")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Lamaran berhasil dikirim"),
+     *     @OA\Response(response=401, description="Unauthenticated"),
+     *     @OA\Response(response=403, description="Forbidden — bukan pelamar"),
+     *     @OA\Response(response=422, description="Validasi gagal atau lowongan tidak aktif")
+     * )
+     */
     public function store(Request $request): JsonResponse
     {
         if (Auth::user()->role !== 'pelamar') {
@@ -70,6 +101,17 @@ class LamaranController extends Controller
         ], 201);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/lamaran",
+     *     tags={"Lamaran"},
+     *     summary="Riwayat semua lamaran milik pelamar yang login",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(response=200, description="Daftar lamaran berhasil diambil"),
+     *     @OA\Response(response=401, description="Unauthenticated"),
+     *     @OA\Response(response=403, description="Forbidden — bukan pelamar")
+     * )
+     */
     public function index(Request $request): JsonResponse
     {
         // Pastikan hanya pelamar yang bisa melihat riwayat lamarannya
@@ -89,6 +131,20 @@ class LamaranController extends Controller
         ], 200);
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/api/lamaran/{id}",
+     *     tags={"Lamaran"},
+     *     summary="Batalkan lamaran (hanya jika status masih 'menunggu')",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="Lamaran berhasil dibatalkan"),
+     *     @OA\Response(response=401, description="Unauthenticated"),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=404, description="Lamaran tidak ditemukan"),
+     *     @OA\Response(response=422, description="Lamaran tidak dapat dibatalkan karena sudah diproses")
+     * )
+     */
     public function destroy(string $id): JsonResponse
     {
         if (Auth::user()->role !== 'pelamar') {

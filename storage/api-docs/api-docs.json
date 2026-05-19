@@ -1,0 +1,1300 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "LamarIn API",
+        "description": "REST API Sistem Informasi Lowongan Pekerjaan — Proyek Akhir Kelompok",
+        "contact": {
+            "email": "kelompok@lamarIn.dev"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://my-default-host.com",
+            "description": "Server Utama"
+        }
+    ],
+    "paths": {
+        "/api/auth/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Registrasi user baru (penyedia atau pelamar)",
+                "operationId": "c7bb21a0d87049e161b8e4c9b0d909f2",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Budi Santoso"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "budi@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password123",
+                                        "minLength": 8
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "example": "pelamar",
+                                        "enum": [
+                                            "penyedia",
+                                            "pelamar"
+                                        ]
+                                    },
+                                    "nama_perusahaan": {
+                                        "type": "string",
+                                        "example": "PT Maju Bersama",
+                                        "nullable": true
+                                    },
+                                    "telepon": {
+                                        "type": "string",
+                                        "example": "081234567890",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User berhasil didaftarkan"
+                    },
+                    "422": {
+                        "description": "Validasi gagal"
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login dan dapatkan JWT token",
+                "operationId": "dd51a484b7fa0f97c7680fdbde14cf5f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "budi@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login berhasil"
+                    },
+                    "401": {
+                        "description": "Kredensial tidak valid"
+                    }
+                }
+            }
+        },
+        "/api/auth/me": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Melihat data user yang sedang login",
+                "operationId": "b5de204f5e452ef51327c691aa99e77c",
+                "responses": {
+                    "200": {
+                        "description": "Data user berhasil diambil"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logout dan invalidate JWT token",
+                "operationId": "df9bdc6c7a6d9f20b983526b2ec0f698",
+                "responses": {
+                    "200": {
+                        "description": "Logout berhasil"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/refresh": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Refresh JWT token yang masih aktif",
+                "operationId": "30c20c52f5f72828d8c531fd7c9ea3e7",
+                "responses": {
+                    "200": {
+                        "description": "Token berhasil di-refresh"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/kategori": {
+            "get": {
+                "tags": [
+                    "Kategori"
+                ],
+                "summary": "Tampilkan semua kategori pekerjaan",
+                "description": "Endpoint publik. Tidak memerlukan autentikasi.",
+                "operationId": "7859f77a79e6eba83303683052eaaa59",
+                "responses": {
+                    "200": {
+                        "description": "Daftar kategori berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Daftar kategori berhasil diambil."
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/KategoriPekerjaan"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Kategori"
+                ],
+                "summary": "Buat kategori pekerjaan baru",
+                "description": "Hanya dapat diakses oleh pengguna dengan role **penyedia**.",
+                "operationId": "cfc2bf78680407adc9f8ad42c00a3758",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nama_kategori"
+                                ],
+                                "properties": {
+                                    "nama_kategori": {
+                                        "type": "string",
+                                        "example": "Teknologi Informasi",
+                                        "maxLength": 100
+                                    },
+                                    "deskripsi": {
+                                        "type": "string",
+                                        "example": "Lowongan di bidang IT, software, dan jaringan.",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Kategori berhasil dibuat",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Kategori berhasil dibuat."
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/KategoriPekerjaan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Token tidak valid atau tidak ditemukan"
+                    },
+                    "403": {
+                        "description": "Akses ditolak. Bukan Penyedia."
+                    },
+                    "422": {
+                        "description": "Validasi gagal (nama_kategori duplikat atau kosong)"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/kategori/{id}": {
+            "put": {
+                "tags": [
+                    "Kategori"
+                ],
+                "summary": "Perbarui kategori pekerjaan",
+                "description": "Hanya dapat diakses oleh pengguna dengan role **penyedia**.",
+                "operationId": "41243e4f5f696e9cdb2bef6f30a6e93a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID kategori yang akan diperbarui",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nama_kategori"
+                                ],
+                                "properties": {
+                                    "nama_kategori": {
+                                        "type": "string",
+                                        "example": "Desain Grafis",
+                                        "maxLength": 100
+                                    },
+                                    "deskripsi": {
+                                        "type": "string",
+                                        "example": "Lowongan untuk desainer visual.",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Kategori berhasil diperbarui",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Kategori berhasil diperbarui."
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/KategoriPekerjaan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Token tidak valid"
+                    },
+                    "403": {
+                        "description": "Akses ditolak"
+                    },
+                    "404": {
+                        "description": "Kategori tidak ditemukan"
+                    },
+                    "422": {
+                        "description": "Validasi gagal"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Kategori"
+                ],
+                "summary": "Hapus kategori pekerjaan",
+                "description": "Hanya dapat diakses oleh pengguna dengan role **penyedia**. Lowongan terkait akan memiliki kategori_id = NULL (SET NULL).",
+                "operationId": "cd3ac58af134945ce299ac0885c3352d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID kategori yang akan dihapus",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Kategori berhasil dihapus",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Kategori berhasil dihapus."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Token tidak valid"
+                    },
+                    "403": {
+                        "description": "Akses ditolak"
+                    },
+                    "404": {
+                        "description": "Kategori tidak ditemukan"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/lamaran": {
+            "get": {
+                "tags": [
+                    "Lamaran"
+                ],
+                "summary": "Riwayat semua lamaran milik pelamar yang login",
+                "operationId": "0ee6281ad49f4c1e6626e7fcabbc2bd3",
+                "responses": {
+                    "200": {
+                        "description": "Daftar lamaran berhasil diambil"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden — bukan pelamar"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Lamaran"
+                ],
+                "summary": "Kirim lamaran pada lowongan (hanya Pelamar)",
+                "operationId": "32e2a4bc249c3f682e4a59735e372765",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "lowongan_id",
+                                    "cv"
+                                ],
+                                "properties": {
+                                    "lowongan_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "cv": {
+                                        "description": "File CV (PDF/DOC/DOCX, maks 2MB)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "surat_lamaran": {
+                                        "description": "Surat lamaran (opsional, PDF/DOC/DOCX, maks 2MB)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Lamaran berhasil dikirim"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden — bukan pelamar"
+                    },
+                    "422": {
+                        "description": "Validasi gagal atau lowongan tidak aktif"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/lamaran/{id}": {
+            "get": {
+                "tags": [
+                    "Pelamar"
+                ],
+                "summary": "Melihat detail satu lamaran (hanya Penyedia pemilik lowongan)",
+                "operationId": "1ccf7650853df9f40552d97d15fbf139",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID Lamaran",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detail lamaran berhasil diambil"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Lamaran tidak ditemukan"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Lamaran"
+                ],
+                "summary": "Batalkan lamaran (hanya jika status masih 'menunggu')",
+                "operationId": "1eb13d2c674df5f7610e604f5531d27d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lamaran berhasil dibatalkan"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Lamaran tidak ditemukan"
+                    },
+                    "422": {
+                        "description": "Lamaran tidak dapat dibatalkan karena sudah diproses"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/lowongan": {
+            "get": {
+                "tags": [
+                    "Lowongan"
+                ],
+                "summary": "Melihat lowongan (penyedia: milik sendiri | pelamar: semua aktif)",
+                "operationId": "d069a3f898898cb8c4fbc5ef3112e190",
+                "responses": {
+                    "200": {
+                        "description": "Daftar lowongan berhasil diambil"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Lowongan"
+                ],
+                "summary": "Membuat lowongan baru (hanya Penyedia)",
+                "operationId": "1f93d81137336371123964222d9b255e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "judul",
+                                    "deskripsi",
+                                    "kualifikasi",
+                                    "lokasi",
+                                    "jenis_pekerjaan",
+                                    "batas_daftar"
+                                ],
+                                "properties": {
+                                    "judul": {
+                                        "type": "string",
+                                        "example": "Backend Developer"
+                                    },
+                                    "deskripsi": {
+                                        "type": "string",
+                                        "example": "Membangun REST API"
+                                    },
+                                    "kualifikasi": {
+                                        "type": "string",
+                                        "example": "Min. S1 Informatika"
+                                    },
+                                    "lokasi": {
+                                        "type": "string",
+                                        "example": "Malang"
+                                    },
+                                    "jenis_pekerjaan": {
+                                        "type": "string",
+                                        "enum": [
+                                            "full-time",
+                                            "part-time",
+                                            "remote",
+                                            "kontrak"
+                                        ]
+                                    },
+                                    "gaji_min": {
+                                        "type": "integer",
+                                        "example": 5000000
+                                    },
+                                    "gaji_max": {
+                                        "type": "integer",
+                                        "example": 10000000
+                                    },
+                                    "batas_daftar": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-06-30"
+                                    },
+                                    "kategori_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Lowongan berhasil dibuat"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden — bukan penyedia"
+                    },
+                    "422": {
+                        "description": "Validasi gagal"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/lowongan/{id}": {
+            "get": {
+                "tags": [
+                    "Lowongan"
+                ],
+                "summary": "Melihat detail satu lowongan",
+                "operationId": "0afcdc2beb816cd2af76787c43354672",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detail lowongan"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Lowongan tidak ditemukan"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Lowongan"
+                ],
+                "summary": "Memperbarui informasi lowongan",
+                "operationId": "579fdfe0a3004e1dcd92aab4a619269c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "judul": {
+                                        "type": "string"
+                                    },
+                                    "deskripsi": {
+                                        "type": "string"
+                                    },
+                                    "kualifikasi": {
+                                        "type": "string"
+                                    },
+                                    "lokasi": {
+                                        "type": "string"
+                                    },
+                                    "jenis_pekerjaan": {
+                                        "type": "string",
+                                        "enum": [
+                                            "full-time",
+                                            "part-time",
+                                            "remote",
+                                            "kontrak"
+                                        ]
+                                    },
+                                    "gaji_min": {
+                                        "type": "integer"
+                                    },
+                                    "gaji_max": {
+                                        "type": "integer"
+                                    },
+                                    "batas_daftar": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "kategori_id": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Lowongan berhasil diperbarui"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Lowongan tidak ditemukan"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Lowongan"
+                ],
+                "summary": "Menghapus lowongan",
+                "operationId": "fa3332b068d0ad4f13299d5c29054ca7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lowongan berhasil dihapus"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Lowongan tidak ditemukan"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/lowongan/{id}/status": {
+            "patch": {
+                "tags": [
+                    "Lowongan"
+                ],
+                "summary": "Mengubah status aktif/nonaktif lowongan",
+                "operationId": "e7be6114cea2ea4b964bb8e19d7d91b7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "status"
+                                ],
+                                "properties": {
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "aktif",
+                                            "nonaktif"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Status lowongan berhasil diubah"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Lowongan tidak ditemukan"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/lowongan/{id}/pelamar": {
+            "get": {
+                "tags": [
+                    "Pelamar"
+                ],
+                "summary": "Melihat semua pelamar pada lowongan milik penyedia",
+                "operationId": "2f4f7cc2080f2762e089946d636e9b39",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID Lowongan",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar pelamar berhasil diambil"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden — bukan penyedia atau bukan lowongan milik sendiri"
+                    },
+                    "404": {
+                        "description": "Lowongan tidak ditemukan"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/lamaran/{id}/status": {
+            "patch": {
+                "tags": [
+                    "Pelamar"
+                ],
+                "summary": "Update status lamaran pelamar (hanya Penyedia)",
+                "operationId": "9137b3dc7a761fbf76a08a7efda4d35a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID Lamaran",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "status"
+                                ],
+                                "properties": {
+                                    "status": {
+                                        "type": "string",
+                                        "example": "diproses",
+                                        "enum": [
+                                            "menunggu",
+                                            "diproses",
+                                            "wawancara",
+                                            "diterima",
+                                            "ditolak"
+                                        ]
+                                    },
+                                    "catatan_penyedia": {
+                                        "type": "string",
+                                        "example": "Jadwal wawancara Senin pukul 09.00",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Status lamaran berhasil diperbarui"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden — bukan penyedia"
+                    },
+                    "404": {
+                        "description": "Lamaran tidak ditemukan"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/lamaran/saya": {
+            "get": {
+                "tags": [
+                    "Status Lamaran"
+                ],
+                "summary": "Melihat semua riwayat lamaran milik pelamar yang login",
+                "operationId": "e41a0c2eb5fb3cac1ba78dee51873291",
+                "responses": {
+                    "200": {
+                        "description": "Daftar riwayat lamaran berhasil diambil"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden — bukan pelamar"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/lamaran/saya/{id}": {
+            "get": {
+                "tags": [
+                    "Status Lamaran"
+                ],
+                "summary": "Melihat detail satu lamaran milik pelamar berdasarkan ID",
+                "operationId": "a2fc1c0074d3620d7cc719ea3d0c1f2f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detail lamaran berhasil diambil"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden — bukan pelamar"
+                    },
+                    "404": {
+                        "description": "Lamaran tidak ditemukan"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "KategoriPekerjaan": {
+                "title": "Kategori Pekerjaan",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nama_kategori": {
+                        "type": "string",
+                        "example": "Teknologi Informasi"
+                    },
+                    "deskripsi": {
+                        "type": "string",
+                        "example": "Meliputi posisi software engineer, sysadmin, dll.",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Lowongan": {
+                "title": "Lowongan Pekerjaan",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "kategori_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "judul": {
+                        "type": "string",
+                        "example": "Backend Engineer Laravel"
+                    },
+                    "deskripsi": {
+                        "type": "string",
+                        "example": "Kami mencari backend engineer berpengalaman..."
+                    },
+                    "lokasi": {
+                        "type": "string",
+                        "example": "Surabaya"
+                    },
+                    "jenis_pekerjaan": {
+                        "type": "string",
+                        "example": "full-time",
+                        "enum": [
+                            "full-time",
+                            "part-time",
+                            "freelance",
+                            "magang"
+                        ]
+                    },
+                    "gaji": {
+                        "type": "string",
+                        "example": "Rp 8.000.000 – Rp 12.000.000",
+                        "nullable": true
+                    },
+                    "batas_lamaran": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2025-03-31"
+                    },
+                    "is_aktif": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "kategori": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/KategoriPekerjaan"
+                            }
+                        ],
+                        "nullable": true
+                    },
+                    "penyedia": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 2
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "PT Maju Bersama"
+                            }
+                        },
+                        "type": "object",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorValidasi": {
+                "properties": {
+                    "status": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Validasi gagal."
+                    },
+                    "errors": {
+                        "type": "object",
+                        "example": {
+                            "nama_kategori": [
+                                "Nama kategori wajib diisi."
+                            ]
+                        },
+                        "additionalProperties": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorUnauthorized": {
+                "properties": {
+                    "status": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Token tidak valid atau sudah kedaluwarsa."
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorForbidden": {
+                "properties": {
+                    "status": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Akses ditolak. Hanya Penyedia yang dapat melakukan aksi ini."
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Autentikasi & Manajemen Token JWT"
+        },
+        {
+            "name": "Kategori",
+            "description": "Manajemen Kategori Pekerjaan"
+        },
+        {
+            "name": "Lamaran",
+            "description": "Fitur Pelamaran oleh Pelamar"
+        },
+        {
+            "name": "Lowongan",
+            "description": "Manajemen Lowongan Pekerjaan oleh Penyedia"
+        },
+        {
+            "name": "Pelamar",
+            "description": "Manajemen Pelamar oleh Penyedia"
+        },
+        {
+            "name": "Status Lamaran",
+            "description": "Pelacakan Status Lamaran oleh Pelamar"
+        }
+    ]
+}

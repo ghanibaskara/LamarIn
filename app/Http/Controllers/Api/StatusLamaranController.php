@@ -6,11 +6,26 @@ use App\Http\Controllers\Controller;
 use App\Models\Lamaran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Tag(
+ *     name="Status Lamaran",
+ *     description="Pelacakan Status Lamaran oleh Pelamar"
+ * )
+ */
 class StatusLamaranController extends Controller
 {
     /**
-     * Mengambil daftar seluruh lamaran milik pelamar yang sedang login.
+     * @OA\Get(
+     *     path="/api/lamaran/saya",
+     *     tags={"Status Lamaran"},
+     *     summary="Melihat semua riwayat lamaran milik pelamar yang login",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(response=200, description="Daftar riwayat lamaran berhasil diambil"),
+     *     @OA\Response(response=401, description="Unauthenticated"),
+     *     @OA\Response(response=403, description="Forbidden — bukan pelamar")
+     * )
      */
     public function index()
     {
@@ -35,7 +50,17 @@ class StatusLamaranController extends Controller
     }
 
     /**
-     * Menampilkan detail satu lamaran berdasarkan ID milik pelamar.
+     * @OA\Get(
+     *     path="/api/lamaran/saya/{id}",
+     *     tags={"Status Lamaran"},
+     *     summary="Melihat detail satu lamaran milik pelamar berdasarkan ID",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="Detail lamaran berhasil diambil"),
+     *     @OA\Response(response=401, description="Unauthenticated"),
+     *     @OA\Response(response=403, description="Forbidden — bukan pelamar"),
+     *     @OA\Response(response=404, description="Lamaran tidak ditemukan")
+     * )
      */
     public function show($id)
     {
