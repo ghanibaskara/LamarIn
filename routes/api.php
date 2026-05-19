@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\KategoriController;
 use App\Http\Controllers\Api\LamaranController;
 use App\Http\Controllers\Api\LowonganController;
 use App\Http\Controllers\Api\PelamarController;
@@ -16,6 +17,15 @@ Route::prefix('auth')->group(function () {
         Route::post('/refresh', [AuthController::class, 'refresh']);
         Route::post('/logout', [AuthController::class, 'logout']);
     });
+});
+
+// 5.6 — Kategori Pekerjaan Publik: GET | Penyedia: POST, PUT, DELETE (Ahza)
+Route::get('/kategori', [KategoriController::class, 'index']);
+
+Route::middleware(['auth:api', 'role:penyedia'])->group(function () {
+    Route::post('/kategori', [KategoriController::class, 'store']);
+    Route::put('/kategori/{id}', [KategoriController::class, 'update']);
+    Route::delete('/kategori/{id}', [KategoriController::class, 'destroy']);
 });
 
 Route::middleware('auth:api')->group(function () {
@@ -34,7 +44,6 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('/lamaran/{id}', [LamaranController::class, 'destroy']);
 
     // 5.4 — Manajemen Pelamar oleh Penyedia (Septian)
-    // CATATAN: Saat 5.5 ditambahkan, route /lamaran/saya HARUS didaftarkan SEBELUM /lamaran/{id}
     Route::get('/lowongan/{id}/pelamar', [PelamarController::class, 'index']);
     Route::get('/lamaran/{id}', [PelamarController::class, 'show']);
     Route::patch('/lamaran/{id}/status', [PelamarController::class, 'updateStatus']);

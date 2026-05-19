@@ -21,12 +21,18 @@ class LowonganController extends Controller
      * @OA\Get(
      *     path="/api/lowongan",
      *     tags={"Lowongan"},
-     *     summary="Melihat lowongan (penyedia: milik sendiri | pelamar: semua aktif)",
+     *     summary="Melihat lowongan (penyedia: milik sendiri | pelamar: semua aktif + filter)",
      *     security={{"bearerAuth":{}}},
-     *     @OA\Response(
-     *         response=200,
-     *         description="Daftar lowongan berhasil diambil"
-     *     ),
+     *     @OA\Parameter(name="kategori_id", in="query", required=false,
+     *         @OA\Schema(type="integer"), description="Filter berdasarkan ID kategori"),
+     *     @OA\Parameter(name="lokasi", in="query", required=false,
+     *         @OA\Schema(type="string"), description="Filter lokasi (partial match)"),
+     *     @OA\Parameter(name="jenis_pekerjaan", in="query", required=false,
+     *         @OA\Schema(type="string", enum={"full-time","part-time","remote","kontrak"}),
+     *         description="Filter jenis pekerjaan"),
+     *     @OA\Parameter(name="keyword", in="query", required=false,
+     *         @OA\Schema(type="string"), description="Cari di judul dan deskripsi"),
+     *     @OA\Response(response=200, description="Daftar lowongan berhasil diambil"),
      *     @OA\Response(response=401, description="Unauthenticated")
      * )
      */
@@ -40,10 +46,30 @@ class LowonganController extends Controller
                 ->latest()
                 ->get();
         } else {
-            $lowongans = Lowongan::with('kategori', 'penyedia')
-                ->where('status', 'aktif')
-                ->latest()
-                ->get();
+            $query = Lowongan::with('kategori', 'penyedia')
+                ->where('status', 'aktif');
+
+            $query->when($request->filled('kategori_id'), function ($q) use ($request) {
+                $q->where('kategori_id', (int) $request->kategori_id);
+            });
+
+            $query->when($request->filled('lokasi'), function ($q) use ($request) {
+                $q->whereRaw('LOWER(lokasi) LIKE ?', ['%' . strtolower($request->lokasi) . '%']);
+            });
+
+            $query->when($request->filled('jenis_pekerjaan'), function ($q) use ($request) {
+                $q->whereRaw('LOWER(jenis_pekerjaan) = ?', [strtolower($request->jenis_pekerjaan)]);
+            });
+
+            $query->when($request->filled('keyword'), function ($q) use ($request) {
+                $keyword = '%' . strtolower($request->keyword) . '%';
+                $q->where(function ($inner) use ($keyword) {
+                    $inner->whereRaw('LOWER(judul) LIKE ?', [$keyword])
+                          ->orWhereRaw('LOWER(deskripsi) LIKE ?', [$keyword]);
+                });
+            });
+
+            $lowongans = $query->latest()->get();
         }
 
         return response()->json([
