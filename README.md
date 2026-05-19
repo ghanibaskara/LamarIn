@@ -99,7 +99,7 @@ Server akan berjalan di `http://127.0.0.1:8000`.
 
 ---
 
-## 📖 Dokumentasi API (Swagger)
+##  Dokumentasi API (Swagger)
 
 Setelah server berjalan, buka dokumentasi interaktif di:
 
