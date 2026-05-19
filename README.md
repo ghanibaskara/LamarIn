@@ -1,4 +1,4 @@
-# LamarIn — REST API Sistem Informasi Lowongan Pekerjaan
+# LamarIn - REST API Sistem Informasi Lowongan Pekerjaan
 
 > Tugas Akhir Mata Kuliah **Teknologi Integrasi Sistem - B**  
 > Universitas Brawijaya · 2026
