@@ -221,7 +221,7 @@ class LowonganController extends Controller
             'lokasi'          => ['sometimes', 'string', 'max:255'],
             'jenis_pekerjaan' => ['sometimes', 'in:full-time,part-time,remote,kontrak'],
             'gaji_min'        => ['nullable', 'integer', 'min:0'],
-            'gaji_max'        => ['nullable', 'integer', 'min:0', 'gte:gaji_min'],
+            'gaji_max'        => array_filter(['nullable', 'integer', 'min:0', $request->has('gaji_min') ? 'gte:gaji_min' : null]),
             'batas_daftar'    => ['sometimes', 'date', 'after:today'],
             'kategori_id'     => ['nullable', 'exists:kategori_pekerjaans,id'],
         ]);

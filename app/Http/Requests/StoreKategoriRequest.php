@@ -15,7 +15,7 @@ class StoreKategoriRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->check() && auth()->user()->role === 'penyedia';
+        return auth()->check();
     }
 
     /**

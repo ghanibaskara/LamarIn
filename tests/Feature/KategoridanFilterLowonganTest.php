@@ -37,7 +37,7 @@ class KategoridanFilterLowonganTest extends TestCase
 
         $response->assertStatus(200)
                  ->assertJsonStructure([
-                     'status', 'message',
+                     'message',
                      'data' => [['id', 'nama_kategori', 'deskripsi']],
                  ])
                  ->assertJsonCount(3, 'data');
@@ -54,7 +54,6 @@ class KategoridanFilterLowonganTest extends TestCase
                          ->postJson('/api/kategori', $payload);
 
         $response->assertStatus(201)
-                 ->assertJsonPath('status', true)
                  ->assertJsonPath('data.nama_kategori', 'Teknologi Informasi');
 
         $this->assertDatabaseHas('kategori_pekerjaans', ['nama_kategori' => 'Teknologi Informasi']);
@@ -123,7 +122,7 @@ class KategoridanFilterLowonganTest extends TestCase
         $response = $this->withToken($this->tokenPenyedia)
                          ->deleteJson("/api/kategori/{$kategori->id}");
 
-        $response->assertStatus(200)->assertJsonPath('status', true);
+        $response->assertStatus(200)->assertJsonPath('message', 'Kategori berhasil dihapus.');
         $this->assertDatabaseMissing('kategori_pekerjaans', ['id' => $kategori->id]);
     }
 
@@ -136,13 +135,10 @@ class KategoridanFilterLowonganTest extends TestCase
             'status'      => 'aktif',
         ]);
 
-        // SQLite in-memory tidak enforce FK constraint secara default,
-        // jadi kita simulasi SET NULL secara manual sebelum assert
-        $lowongan->update(['kategori_id' => null]);
-
         $this->withToken($this->tokenPenyedia)
              ->deleteJson("/api/kategori/{$kategori->id}");
 
+        $this->assertDatabaseMissing('kategori_pekerjaans', ['id' => $kategori->id]);
         $this->assertDatabaseHas('lowongans', [
             'id'          => $lowongan->id,
             'kategori_id' => null,

@@ -17,6 +17,7 @@ class AuthTest extends TestCase
             'name'                  => 'Budi Pelamar',
             'email'                 => 'budi@mail.com',
             'password'              => 'password123',
+            'password_confirmation' => 'password123',
         ]);
 
         $response->assertStatus(201)
@@ -130,8 +131,8 @@ class AuthTest extends TestCase
                          ->getJson('/api/auth/me');
 
         $response->assertStatus(200)
-                 ->assertJsonPath('user.id', $user->id)
-                 ->assertJsonPath('user.email', $user->email);
+                 ->assertJsonPath('data.id', $user->id)
+                 ->assertJsonPath('data.email', $user->email);
     }
 
     public function test_me_tanpa_token_gagal(): void

@@ -61,6 +61,10 @@ class LamaranController extends Controller
             return response()->json(['message' => 'Lowongan ini tidak sedang aktif.'], 422);
         }
 
+        if ($lowongan->batas_daftar->isPast()) {
+            return response()->json(['message' => 'Batas pendaftaran lowongan sudah lewat.'], 422);
+        }
+
         $alreadyApplied = Lamaran::where('user_id', Auth::id())
             ->where('lowongan_id', $validated['lowongan_id'])
             ->exists();
@@ -70,11 +74,11 @@ class LamaranController extends Controller
         }
 
         $userId    = Auth::id();
-        $timestamp = now()->timestamp;
+        $uniqueId  = uniqid();
 
         $cvPath = $request->file('cv')->storeAs(
             'cv',
-            "{$userId}_{$timestamp}." . $request->file('cv')->getClientOriginalExtension(),
+            "{$userId}_{$uniqueId}." . $request->file('cv')->getClientOriginalExtension(),
             'public'
         );
 
@@ -82,7 +86,7 @@ class LamaranController extends Controller
         if ($request->hasFile('surat_lamaran')) {
             $suratPath = $request->file('surat_lamaran')->storeAs(
                 'surat',
-                "{$userId}_{$timestamp}." . $request->file('surat_lamaran')->getClientOriginalExtension(),
+                "{$userId}_{$uniqueId}." . $request->file('surat_lamaran')->getClientOriginalExtension(),
                 'public'
             );
         }

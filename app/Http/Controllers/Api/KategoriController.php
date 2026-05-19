@@ -30,7 +30,6 @@ class KategoriController extends Controller
      *         response=200,
      *         description="Daftar kategori berhasil diambil",
      *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Daftar kategori berhasil diambil."),
      *             @OA\Property(
      *                 property="data",
@@ -46,10 +45,9 @@ class KategoriController extends Controller
         $kategoris = KategoriPekerjaan::orderBy('nama_kategori')->get();
 
         return response()->json([
-            'status'  => true,
             'message' => 'Daftar kategori berhasil diambil.',
             'data'    => $kategoris,
-        ], 200);
+        ]);
     }
 
     // -------------------------------------------------------------------------
@@ -75,7 +73,6 @@ class KategoriController extends Controller
      *         response=201,
      *         description="Kategori berhasil dibuat",
      *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Kategori berhasil dibuat."),
      *             @OA\Property(property="data", ref="#/components/schemas/KategoriPekerjaan")
      *         )
@@ -90,7 +87,6 @@ class KategoriController extends Controller
         $kategori = KategoriPekerjaan::create($request->validated());
 
         return response()->json([
-            'status'  => true,
             'message' => 'Kategori berhasil dibuat.',
             'data'    => $kategori,
         ], 201);
@@ -126,7 +122,6 @@ class KategoriController extends Controller
      *         response=200,
      *         description="Kategori berhasil diperbarui",
      *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Kategori berhasil diperbarui."),
      *             @OA\Property(property="data", ref="#/components/schemas/KategoriPekerjaan")
      *         )
@@ -143,7 +138,6 @@ class KategoriController extends Controller
 
         if (! $kategori) {
             return response()->json([
-                'status'  => false,
                 'message' => 'Kategori tidak ditemukan.',
             ], 404);
         }
@@ -151,10 +145,9 @@ class KategoriController extends Controller
         $kategori->update($request->validated());
 
         return response()->json([
-            'status'  => true,
             'message' => 'Kategori berhasil diperbarui.',
             'data'    => $kategori->fresh(),
-        ], 200);
+        ]);
     }
 
     // -------------------------------------------------------------------------
@@ -179,7 +172,6 @@ class KategoriController extends Controller
      *         response=200,
      *         description="Kategori berhasil dihapus",
      *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Kategori berhasil dihapus.")
      *         )
      *     ),
@@ -194,7 +186,6 @@ class KategoriController extends Controller
 
         if (! $kategori) {
             return response()->json([
-                'status'  => false,
                 'message' => 'Kategori tidak ditemukan.',
             ], 404);
         }
@@ -202,8 +193,7 @@ class KategoriController extends Controller
         $kategori->delete();
 
         return response()->json([
-            'status'  => true,
             'message' => 'Kategori berhasil dihapus.',
-        ], 200);
+        ]);
     }
 }

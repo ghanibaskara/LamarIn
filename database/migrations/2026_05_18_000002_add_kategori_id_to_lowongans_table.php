@@ -8,17 +8,15 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasColumn('lowongans', 'kategori_id')) {
-            Schema::table('lowongans', function (Blueprint $table) {
-                $table->foreignId('kategori_id')
-                      ->nullable()
-                      ->after('id')
-                      ->constrained('kategori_pekerjaans')
-                      ->nullOnDelete();
+        Schema::table('lowongans', function (Blueprint $table) {
+            $table->foreignId('kategori_id')
+                  ->nullable()
+                  ->after('user_id')
+                  ->constrained('kategori_pekerjaans')
+                  ->nullOnDelete();
 
-                $table->index('kategori_id');
-            });
-        }
+            $table->index('kategori_id');
+        });
     }
 
     public function down(): void

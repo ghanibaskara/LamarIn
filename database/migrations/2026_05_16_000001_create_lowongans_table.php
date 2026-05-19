@@ -11,7 +11,6 @@ return new class extends Migration
         Schema::create('lowongans', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->unsignedBigInteger('kategori_id')->nullable();
             $table->string('judul');
             $table->text('deskripsi');
             $table->text('kualifikasi');
