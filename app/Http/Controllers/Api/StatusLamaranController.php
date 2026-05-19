@@ -19,19 +19,20 @@ class StatusLamaranController extends Controller
         // Validasi Role: Pastikan hanya Pelamar yang bisa mengakses
         if ($user->role !== 'pelamar') {
             return response()->json([
-                'success' => false,
-                'message' => 'Forbidden: Hanya pelamar yang dapat mengakses data ini.'
+                'message' => 'Akses ditolak. Hanya untuk pelamar.',
             ], 403);
         }
 
         // Ambil data lamaran beserta relasi informasi lowongannya
-        $lamarans = Lamaran::with('lowongan')->where('user_id', $user->id)->get();
+        $lamarans = Lamaran::with('lowongan')
+            ->where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return response()->json([
-            'success' => true,
             'message' => 'Daftar riwayat lamaran berhasil diambil.',
-            'data' => $lamarans
-        ], 200);
+            'data'    => $lamarans,
+        ]);
     }
 
     /**
@@ -44,25 +45,22 @@ class StatusLamaranController extends Controller
         // Validasi Role
         if ($user->role !== 'pelamar') {
             return response()->json([
-                'success' => false,
-                'message' => 'Forbidden: Hanya pelamar yang dapat mengakses data ini.'
+                'message' => 'Akses ditolak. Hanya untuk pelamar.',
             ], 403);
         }
 
         // Cari lamaran berdasarkan ID dan pastikan itu milik user pelamar terkait
-        $lamaran = Lamaran::with('lowongan')->where('user_id', $user->id)->find($id);
+        $lamaran = Lamaran::with('lowongan.penyedia')->where('user_id', $user->id)->find($id);
 
         if (!$lamaran) {
             return response()->json([
-                'success' => false,
-                'message' => 'Data lamaran tidak ditemukan atau Anda tidak memiliki akses.'
+                'message' => 'Data lamaran tidak ditemukan atau Anda tidak memiliki akses.',
             ], 404);
         }
 
         return response()->json([
-            'success' => true,
             'message' => 'Detail lamaran berhasil diambil.',
-            'data' => $lamaran
-        ], 200);
+            'data'    => $lamaran,
+        ]);
     }
 }

@@ -14,7 +14,7 @@ class UpdateKategoriRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->check() && auth()->user()->role === 'penyedia';
+        return auth()->check();
     }
 
     /**
@@ -24,12 +24,12 @@ class UpdateKategoriRequest extends FormRequest
      * Ketika update, aturan unique HARUS mengabaikan baris milik dirinya sendiri.
      * Tanpa ini, update tanpa mengubah nama_kategori akan selalu gagal validasi.
      * 
-     * $this->route('kategori') mengambil nilai {id} dari URL /api/kategori/{id}.
+     * $this->route('id') mengambil nilai {id} dari URL /api/kategori/{id}.
      */
     public function rules(): array
     {
         // Ambil ID kategori dari parameter route
-        $kategoriId = $this->route('kategori');
+        $kategoriId = $this->route('id');
 
         return [
             'nama_kategori' => [
