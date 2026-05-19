@@ -141,6 +141,43 @@ class LamaranTest extends TestCase
                  ->assertJsonPath('message', 'Lowongan ini tidak sedang aktif.');
     }
 
+    public function test_tidak_dapat_melamar_lowongan_expired(): void
+    {
+        Storage::fake('public');
+
+        $penyedia = $this->makePenyedia();
+        $pelamar  = $this->makePelamar();
+        $lowongan = $this->createLowongan($penyedia, ['batas_daftar' => now()->subDay()->format('Y-m-d')]);
+
+        $response = $this->withHeaders($this->authHeaders($pelamar))
+                         ->postJson('/api/lamaran', [
+                             'lowongan_id' => $lowongan->id,
+                             'cv'          => $this->fakeCV(),
+                         ]);
+
+        $response->assertStatus(422)
+                 ->assertJsonPath('message', 'Batas pendaftaran lowongan sudah lewat.');
+    }
+
+    public function test_dapat_melamar_lowongan_pada_hari_batas_daftar(): void
+    {
+        Storage::fake('public');
+
+        $penyedia = $this->makePenyedia();
+        $pelamar  = $this->makePelamar();
+        // Set test now to noon, and batas_daftar today
+        $now = now();
+        $lowongan = $this->createLowongan($penyedia, ['batas_daftar' => $now->format('Y-m-d')]);
+
+        $response = $this->withHeaders($this->authHeaders($pelamar))
+                         ->postJson('/api/lamaran', [
+                             'lowongan_id' => $lowongan->id,
+                             'cv'          => $this->fakeCV(),
+                         ]);
+
+        $response->assertStatus(201);
+    }
+
     public function test_tidak_dapat_melamar_lowongan_yang_tidak_ada(): void
     {
         Storage::fake('public');

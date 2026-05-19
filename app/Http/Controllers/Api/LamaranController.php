@@ -61,7 +61,7 @@ class LamaranController extends Controller
             return response()->json(['message' => 'Lowongan ini tidak sedang aktif.'], 422);
         }
 
-        if ($lowongan->batas_daftar->isPast()) {
+        if ($lowongan->batas_daftar->endOfDay()->isPast()) {
             return response()->json(['message' => 'Batas pendaftaran lowongan sudah lewat.'], 422);
         }
 

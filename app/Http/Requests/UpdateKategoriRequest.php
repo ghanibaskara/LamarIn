@@ -67,8 +67,7 @@ class UpdateKategoriRequest extends FormRequest
     {
         throw new HttpResponseException(
             response()->json([
-                'status'  => 'error',
-                'message' => 'Validasi gagal',
+                'message' => 'Validasi gagal.',
                 'errors'  => $validator->errors(),
             ], 422)
         );
@@ -81,8 +80,7 @@ class UpdateKategoriRequest extends FormRequest
     {
         throw new HttpResponseException(
             response()->json([
-                'status'  => 'error',
-                'message' => 'Anda tidak memiliki izin untuk melakukan aksi ini',
+                'message' => 'Anda tidak memiliki izin untuk melakukan aksi ini.',
             ], 403)
         );
     }
